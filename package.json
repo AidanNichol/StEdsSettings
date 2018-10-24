@@ -1,0 +1,15 @@
+{
+  "name": "settings",
+  "version": "1.0.0",
+  "description": "Utility to stroe and retrieve configuration elements",
+  "main": "index.js",
+  "repository": {
+    "url": "https://github.com/AidanNichol/settings",
+    "type": "git"
+  },
+  "author": "AidanNichol <aidan@nicholware.co.uk>",
+  "license": "MIT",
+  "dependencies": {
+    "conf": "^2.0.0"
+  }
+}
