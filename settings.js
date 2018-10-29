@@ -1,27 +1,44 @@
 const Conf = require('conf');
 const fs = require('fs');
 let settings = new Conf();
-if (!fs.existsSync('/Users/aidan/Library/Preferences/stedsbookings-nodejs/config.json')) {
-  const settingsE = require('electron-settings');
-  settings.store = settingsE.getAll();
-}
-// settings
-//   .argv()
-//   .env()
-//   .file({ file: '/Users/aidan/Library/Application Support/Electron/Settings' });
+// settings   .argv()   .env()   .file({ file: '/Users/aidan/Library/Application
+// Support/Electron/Settings' });
 let defaults = {
   user: {
     current: 'aidan',
-    sandy: { password: '', roles: ['bookings', 'steds'] },
-    pat: { password: '', roles: ['bookings', 'steds'] },
-    aidan: { password: '', roles: ['admin', 'steds'] },
-    ray: { password: '', roles: ['membership', 'steds'] },
+    sandy: {
+      password: '',
+      roles: ['bookings', 'steds']
+    },
+    pat: {
+      password: '',
+      roles: ['bookings', 'steds']
+    },
+    aidan: {
+      password: '',
+      roles: ['admin', 'steds']
+    },
+    ray: {
+      password: '',
+      roles: ['membership', 'steds']
+    }
   },
 
-  lock: { enabled: false, delay: 5000 },
-  debug: { devtoolsOpen: false, database: false },
-  router: { clear: true, enabled: false },
-  machine: { name: '' },
+  lock: {
+    enabled: false,
+    delay: 5000
+  },
+  debug: {
+    devtoolsOpen: false,
+    database: false
+  },
+  router: {
+    clear: true,
+    enabled: false
+  },
+  machine: {
+    name: ''
+  },
   database: {
     current: 'production',
     production: {
@@ -33,7 +50,7 @@ let defaults = {
       localUsers: '_users',
       resetLocalUser: false,
       useFullHistory: true,
-      resolveConflicts: false,
+      resolveConflicts: false
     },
     developement: {
       localname: 'devbookings',
@@ -46,10 +63,10 @@ let defaults = {
       localUsers: 'devUsers',
       resetLocalUser: false,
       useFullHistory: true,
-      resolveConflicts: false,
-    },
+      resolveConflicts: false
+    }
   },
-  advanced: false,
+  advanced: false
 };
 let existing = {};
 try {
@@ -58,23 +75,31 @@ try {
   console.log('get setting', error);
 }
 function upgradeObject(newVal, old) {
-  Object.keys(newVal).forEach(key => {
-    let value = newVal[key];
-    if (typeof value === 'object' && typeof old[key] === 'object')
-      upgradeObject(newVal[key], old[key]);
-    else if (old[key] !== undefined) newVal[key] = old[key];
-  });
+  Object
+    .keys(newVal)
+    .forEach(key => {
+      let value = newVal[key];
+      if (typeof value === 'object' && typeof old[key] === 'object') 
+        upgradeObject(newVal[key], old[key]);
+      else if (old[key] !== undefined) 
+        newVal[key] = old[key];
+      }
+    );
 }
-let newValues = { ...defaults };
+let newValues = {
+  ...defaults
+};
 upgradeObject(newValues, existing);
 
 settings.store = newValues;
 if (settings.get('machine.name') === '') {
-  require('getmac').getMac(function(err, macAddress) {
-    if (err) throw err;
-    settings.set('machine.name', macAddress);
-    console.log(macAddress);
-  });
+  require('getmac')
+    .getMac(function (err, macAddress) {
+      if (err) 
+        throw err;
+      settings.set('machine.name', macAddress);
+      console.log(macAddress);
+    });
 }
 exports.machine = settings.get('machine.name');
 exports.mode = settings.get('database.current');
@@ -87,7 +112,7 @@ exports.getAllSettings = () => settings.store;
 exports.getSettings = field => settings.get(field);
 exports.setSettings = (field, value) => {
   console.log(`setting ${field} = ${value}`);
-  settings.set(field, value, { prettify: true });
+  settings.set(field, value, {prettify: true});
 };
 exports.lockSettings = settings.get('lock');
 console.log('lock values', exports);
