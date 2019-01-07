@@ -74,17 +74,17 @@ try {
 } catch (error) {
   console.log('get setting', error);
 }
+
 function upgradeObject(newVal, old) {
   Object
     .keys(newVal)
     .forEach(key => {
       let value = newVal[key];
-      if (typeof value === 'object' && typeof old[key] === 'object') 
+      if (typeof value === 'object' && typeof old[key] === 'object')
         upgradeObject(newVal[key], old[key]);
-      else if (old[key] !== undefined) 
+      else if (old[key] !== undefined)
         newVal[key] = old[key];
-      }
-    );
+    });
 }
 let newValues = {
   ...defaults
@@ -95,7 +95,7 @@ settings.store = newValues;
 if (settings.get('machine.name') === '') {
   require('getmac')
     .getMac(function (err, macAddress) {
-      if (err) 
+      if (err)
         throw err;
       settings.set('machine.name', macAddress);
       console.log(macAddress);
@@ -112,7 +112,9 @@ exports.getAllSettings = () => settings.store;
 exports.getSettings = field => settings.get(field);
 exports.setSettings = (field, value) => {
   console.log(`setting ${field} = ${value}`);
-  settings.set(field, value, {prettify: true});
+  settings.set(field, value, {
+    prettify: true
+  });
 };
 exports.lockSettings = settings.get('lock');
 console.log('lock values', exports);
