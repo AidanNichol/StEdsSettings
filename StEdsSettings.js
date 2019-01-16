@@ -1,121 +1,93 @@
-const Conf = require('conf');
+const su = require( "./StEdsSettingsSetup.js");
 const fs = require('fs');
-let settings = new Conf();
-// settings   .argv()   .env()   .file({ file: '/Users/aidan/Library/Application
-// Support/Electron/Settings' });
-let defaults = {
-  user: {
-    current: 'aidan',
-    sandy: {
-      password: '',
-      roles: ['bookings', 'steds']
-    },
-    pat: {
-      password: '',
-      roles: ['bookings', 'steds']
-    },
-    aidan: {
-      password: '',
-      roles: ['admin', 'steds']
-    },
-    ray: {
-      password: '',
-      roles: ['membership', 'steds']
-    }
-  },
+const path = require('path');
+const logit = require('logit')(__filename);
+let cfg = path.resolve(process.cwd(), '.env');
+let outF = cfg;
 
-  lock: {
-    enabled: false,
-    delay: 5000
-  },
-  debug: {
-    devtoolsOpen: false,
-    database: false
-  },
-  router: {
-    clear: true,
-    enabled: false
-  },
-  machine: {
-    name: ''
-  },
-  database: {
-    current: 'production',
-    production: {
-      localname: 'stEdsBookings',
-      resetLocalBookings: false,
-      adapter: 'websql',
-      remotename: 'bookings',
-      remotehost: 'nicholware.com',
-      localUsers: '_users',
-      resetLocalUser: false,
-      useFullHistory: true,
-      resolveConflicts: false
-    },
-    developement: {
-      localname: 'devbookings',
-      resetLocalBookings: false,
-      adapter: 'websql',
-      remotename: 'devbookings',
-      remotehost: '127.0.0.1',
-      user: 'aidan',
-      password: 'admin',
-      localUsers: 'devUsers',
-      resetLocalUser: false,
-      useFullHistory: true,
-      resolveConflicts: false
-    }
-  },
-  advanced: false
-};
-let existing = {};
-try {
-  existing = settings.store;
-} catch (error) {
-  console.log('get setting', error);
-}
+class Store {
+  constructor() {
+    this.data = {}
+    this.initStore()
+    this.oufFile  = this.get('envfileName')||path.resolve(process.cwd(), '.env');
+  }
+  update(key, val) {
+    let keys = key.split(/[_.]/)
+    if (keys[0]==='STEDS') keys.shift();
+    const last = keys.pop();
+    let loc = keys.reduce((l, k) => {
+      if (!l[k]) l[k] = last.match(/^[0-9]$/) ? [] : {};
+      return l[k];
+    }, this.data);
+    loc[last] = this.tweakVal(val);
+  }
+  set(key, val){
+    this.update(key,val);
+    this.save();
 
-function upgradeObject(newVal, old) {
-  Object
-    .keys(newVal)
-    .forEach(key => {
-      let value = newVal[key];
-      if (typeof value === 'object' && typeof old[key] === 'object')
-        upgradeObject(newVal[key], old[key]);
-      else if (old[key] !== undefined)
-        newVal[key] = old[key];
+  }
+  get(key) {
+    let keys = key.split(/[_.]/)
+    return keys.reduce((loc, k) => loc && loc[k], this.data);
+  }
+  tweakVal(val) {
+    if (val === 'true') return true;
+    if (val === 'false') return false;
+    if (typeof val ==='string' && val.match(/^[0-9]+$/)) return parseInt(val)
+    return val;
+  }
+  initStore() {
+    const ours = Object.entries(process.env).filter(([key, value]) => key.match(/^STEDS_/));
+    ours.forEach(item => this.update(...item))
+  }
+  save(){
+    const data = this.flattenObj(this.data, 'STEDS');
+    logit('saving\n', data)
+    this.outputEnv(data, this.outFile);
+  }
+  outputEnv(data, outF) {
+    const outData = data
+      .map(([tag, val]) => {
+        // if (typeof val === 'string') val = `"${val}"`;
+        return `${tag}=${val}`;
+      })
+      .join('\n');
+    logit('output', outF, '\n', outData);
+    return fs.writeFileSync(outF, outData);
+  }
+  
+  flattenObj(obj, base) {
+    const fo = [];
+    Object.entries(obj).forEach(([key, val]) => {
+      const baseN = base + '_' + key;
+      let arr = [];
+      if (typeof val === 'object') arr = this.flattenObj(val, baseN);
+      else arr = [
+        [baseN, val]
+      ];
+      fo.push(...arr);
     });
-}
-let newValues = {
-  ...defaults
-};
-upgradeObject(newValues, existing);
+    return fo;
+  }
+  // syntactic sugar to support old way of doing it in
+  // the sT.eds bookings electron app
+  machine(){ return this.get('machine.name');}
+  mode(){ return this.get('database.current');}
+  DbSettings(){ return this.get(`database.${exports.mode}`);}
+  useFullHistory(){ return this.DbSettings().useFullHistory;}
 
-settings.store = newValues;
-if (settings.get('machine.name') === '') {
-  require('getmac')
-    .getMac(function (err, macAddress) {
-      if (err)
-        throw err;
-      settings.set('machine.name', macAddress);
-      console.log(macAddress);
-    });
-}
-exports.machine = settings.get('machine.name');
-exports.mode = settings.get('database.current');
-exports.DbSettings = settings.get(`database.${exports.mode}`);
-console.log('settings DbSettings', exports);
-exports.useFullHistory = exports.DbSettings.useFullHistory;
-exports.resolveConflicts = exports.DbSettings.resolveConflicts;
-
-exports.getAllSettings = () => settings.store;
-exports.getSettings = field => settings.get(field);
-exports.setSettings = (field, value) => {
-  console.log(`setting ${field} = ${value}`);
-  settings.set(field, value, {
-    prettify: true
-  });
+  getAllSettings(){ return () => this.data;}
+  getSettings(f) {return this.get(f);}
+  setSettings(field, value){ return set(field, value) ;}
 };
-exports.lockSettings = settings.get('lock');
-console.log('lock values', exports);
-console.log('setting File', settings.path);
+
+
+
+
+// const dotenv = require('dotenv');
+// const input = dotenv.config({ path: outF });
+// logit('input', input);
+const store = new Store();
+
+
+module.exports  = store;

@@ -1,7 +1,7 @@
 {
   "name": "StEdsSettings",
   "version": "1.0.0",
-  "description": "Utility to stroe and retrieve configuration elements",
+  "description": "Utility to store and retrieve configuration elements",
   "main": "StEdsSettings.js",
   "repository": {
     "url": "https://github.com/AidanNichol/settings",
@@ -10,7 +10,11 @@
   "author": "AidanNichol <aidan@nicholware.co.uk>",
   "license": "MIT",
   "dependencies": {
-    "conf": "^2.0.0",
-    "getmac": "^1.4.6"
+    "conf": "^2.1.0",
+    "getmac": "^1.4.6",
+    "logit": "https://github.com/AidanNichol/logit",
+    "dotenv": "^6.2.0"
+  },
+  "devDependencies": {
   }
 }
