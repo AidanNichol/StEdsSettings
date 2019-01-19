@@ -1,4 +1,3 @@
-const su = require( "./StEdsSettingsSetup.js");
 const fs = require('fs');
 const path = require('path');
 const logit = require('logit')(__filename);
@@ -9,7 +8,7 @@ class Store {
   constructor() {
     this.data = {}
     this.initStore()
-    this.oufFile  = this.get('envfileName')||path.resolve(process.cwd(), '.env');
+    this.outFile  = this.get('envfileName')||path.resolve(process.cwd(), '.env');
   }
   update(key, val) {
     let keys = key.split(/[_.]/)
