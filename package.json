@@ -1,6 +1,6 @@
 {
   "name": "StEdsSettings",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Utility to store and retrieve configuration elements",
   "main": "StEdsSettings.js",
   "repository": {
