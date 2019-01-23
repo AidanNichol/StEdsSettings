@@ -13,7 +13,7 @@ class Store {
     this.machine = this.get('machine.name');
     this.mode = this.get('database.current');
     this.DbSettings = this.get(`database.${exports.mode}`);
-    this.useFullHistory = this.DbSettings().useFullHistory;
+    this.useFullHistory = this.DbSettings.useFullHistory;
   
   
     this.set = this.set.bind(this);
