@@ -9,29 +9,22 @@ class Store {
     this.data = {}
     this.initStore()
     this.outFile  = this.get('envfileName')||path.resolve(process.cwd(), '.env');
-    this.machine = this.machine.bind(this);
-    this.mode = this.mode.bind(this);
-    this.DbSettings = this.DbSettings.bind(this);
-    this.useFullHistory = this.useFullHistory.bind(this);
-  
-    this.getAllSettings = this.getAllSettings.bind(this);
-    this.getSettings = this.getSettings.bind(this);
-    this.setSettings = this.setSettings.bind(this);
-    this.get = this.get.bind(this);
-    this.update = this.update.bind(this);
 
-      this.get = this.get.bind(this);
-    
-      this.tweakVal = this.tweakVal.bind(this);
-    
-      this.initStore = this.initStore.bind(this);
-    
-      this.outputEnv = this.outputEnv.bind(this);
-    
-      this.flattenObj = this.flattenObj.bind(this);
-    
-      this.getSettings = this.getSettings.bind(this);
-    
+    this.machine = this.get('machine.name');
+    this.mode = this.get('database.current');
+    this.DbSettings = this.get(`database.${exports.mode}`);
+    this.useFullHistory = this.DbSettings().useFullHistory;
+  
+  
+    this.set = this.set.bind(this);
+    this.get = this.get.bind(this);
+    this.getSettings = this.get;
+    this.setSettings = this.set;
+    this.update = this.update.bind(this);
+    this.tweakVal = this.tweakVal.bind(this);
+    this.initStore = this.initStore.bind(this);
+    this.outputEnv = this.outputEnv.bind(this);
+    this.flattenObj = this.flattenObj.bind(this);
   
   }
   update(key, val) {
@@ -94,14 +87,10 @@ class Store {
   }
   // syntactic sugar to support old way of doing it in
   // the sT.eds bookings electron app
-  machine(){ return this.get('machine.name');}
-  mode(){ return this.get('database.current');}
-  DbSettings(){ return this.get(`database.${exports.mode}`);}
-  useFullHistory(){ return this.DbSettings().useFullHistory;}
-
-  getAllSettings(){ return () => this.data;}
-  getSettings(f) {return this.get(f);}
-  setSettings(field, value){ return set(field, value) ;}
+ 
+  // getAllSettings(){ return () => this.data;}
+  // getSettings(f) {return this.get(f);}
+  // setSettings(field, value){ return set(field, value) ;}
 };
 
 
