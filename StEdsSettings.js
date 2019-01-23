@@ -9,6 +9,30 @@ class Store {
     this.data = {}
     this.initStore()
     this.outFile  = this.get('envfileName')||path.resolve(process.cwd(), '.env');
+    this.machine = this.machine.bind(this);
+    this.mode = this.mode.bind(this);
+    this.DbSettings = this.DbSettings.bind(this);
+    this.useFullHistory = this.useFullHistory.bind(this);
+  
+    this.getAllSettings = this.getAllSettings.bind(this);
+    this.getSettings = this.getSettings.bind(this);
+    this.setSettings = this.setSettings.bind(this);
+    this.get = this.get.bind(this);
+    this.update = this.update.bind(this);
+
+      this.get = this.get.bind(this);
+    
+      this.tweakVal = this.tweakVal.bind(this);
+    
+      this.initStore = this.initStore.bind(this);
+    
+      this.outputEnv = this.outputEnv.bind(this);
+    
+      this.flattenObj = this.flattenObj.bind(this);
+    
+      this.getSettings = this.getSettings.bind(this);
+    
+  
   }
   update(key, val) {
     let keys = key.split(/[_.]/)
