@@ -12,8 +12,8 @@
   "dependencies": {
     "conf": "^2.1.0",
     "dotenv": "^6.2.0",
-    "getmac": "^1.4.6",
-    "logit": "https://github.com/AidanNichol/logit"
+    "env-paths": "^2.0.0",
+    "getmac": "^1.4.6"
   },
   "devDependencies": {}
 }

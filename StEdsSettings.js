@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const logit = require('logit')(__filename);
 let cfg = path.resolve(process.cwd(), '.env');
 let outF = cfg;
 
@@ -8,14 +7,13 @@ class Store {
   constructor() {
     this.data = {}
     this.initStore()
-    this.outFile  = this.get('envfileName')||path.resolve(process.cwd(), '.env');
-
-    this.machine = this.get('machine.name');
+    this.path  = this.get('envfileName')||path.resolve(process.cwd(), '.env');
+    this.machine = this.data.machine.name;
     this.mode = this.get('database.current');
-    this.DbSettings = this.get(`database.${exports.mode}`);
+    this.DbSettings = this.get(`database.${this.mode}`);
     this.useFullHistory = this.DbSettings.useFullHistory;
   
-  
+    this.store = this.data;
     this.set = this.set.bind(this);
     this.get = this.get.bind(this);
     this.getSettings = this.get;
@@ -58,17 +56,14 @@ class Store {
   }
   save(){
     const data = this.flattenObj(this.data, 'STEDS');
-    logit('saving\n', data)
-    this.outputEnv(data, this.outFile);
+    this.outputEnv(data, this.path);
   }
   outputEnv(data, outF) {
     const outData = data
       .map(([tag, val]) => {
-        // if (typeof val === 'string') val = `"${val}"`;
         return `${tag}=${val}`;
       })
       .join('\n');
-    logit('output', outF, '\n', outData);
     return fs.writeFileSync(outF, outData);
   }
   
@@ -85,20 +80,11 @@ class Store {
     });
     return fo;
   }
-  // syntactic sugar to support old way of doing it in
-  // the sT.eds bookings electron app
- 
-  // getAllSettings(){ return () => this.data;}
-  // getSettings(f) {return this.get(f);}
-  // setSettings(field, value){ return set(field, value) ;}
 };
 
 
 
 
-// const dotenv = require('dotenv');
-// const input = dotenv.config({ path: outF });
-// logit('input', input);
 const store = new Store();
 
 
