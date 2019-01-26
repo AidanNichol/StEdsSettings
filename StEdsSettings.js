@@ -16,15 +16,17 @@ class Store {
     this.store = this.data;
     this.set = this.set.bind(this);
     this.get = this.get.bind(this);
-    this.getSettings = this.get;
-    this.setSettings = this.set;
+    this.getSettings = this.get.bind(this);
+    this.setSettings = this.set.bind(this);
     this.update = this.update.bind(this);
     this.tweakVal = this.tweakVal.bind(this);
     this.initStore = this.initStore.bind(this);
     this.outputEnv = this.outputEnv.bind(this);
+    this.getAllSettings = this.getAllSettings.bind(this);
     this.flattenObj = this.flattenObj.bind(this);
   
   }
+  getAllSettings(){return this.store;}
   update(key, val) {
     let keys = key.split(/[_.]/)
     if (keys[0]==='STEDS') keys.shift();
