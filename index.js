@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
-let cfg = path.resolve(process.cwd(), '.env');
-let outF = cfg;
+let cfg ;
+let outF;
 
 class Store {
   constructor() {
@@ -54,7 +54,7 @@ class Store {
   }
   initStore() {
     const ours = Object.entries(process.env).filter(([key, value]) => key.match(/^STEDS_/));
-    outF = ours.STEDS_envfile || STEDS_envfile;
+    outF = ours.STEDS_envfile || path.resolve(process.cwd(), '.env');
     ours.STEDS_envfile = outF;
     ours.forEach(item => this.update(...item));
   }
