@@ -7,7 +7,7 @@ class Store {
   constructor() {
     this.data = {}
     this.initStore()
-    this.path  = this.get('envfileName')||path.resolve(process.cwd(), '.env');
+    this.path  = this.data.envfile;
     this.machine = this.data.machine.name;
     this.mode = this.get('database.current');
     this.DbSettings = this.get(`database.${this.mode}`);
@@ -54,9 +54,9 @@ class Store {
   }
   initStore() {
     const ours = Object.entries(process.env).filter(([key, value]) => key.match(/^STEDS_/));
+    outF = ours.STEDS_envfile || STEDS_envfile;
+    ours.STEDS_envfile = outF;
     ours.forEach(item => this.update(...item));
-    outF = ours.envfile || outF;
-    this.store.envfile = outF;
   }
   save(){
     const data = this.flattenObj(this.data, 'STEDS');
