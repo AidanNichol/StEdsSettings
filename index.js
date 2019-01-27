@@ -54,7 +54,9 @@ class Store {
   }
   initStore() {
     const ours = Object.entries(process.env).filter(([key, value]) => key.match(/^STEDS_/));
-    ours.forEach(item => this.update(...item))
+    ours.forEach(item => this.update(...item));
+    outF = ours.envfile || outF;
+    this.store.envfile = outF;
   }
   save(){
     const data = this.flattenObj(this.data, 'STEDS');
