@@ -2,7 +2,7 @@
   "name": "StEdsSettings",
   "version": "1.0.4",
   "description": "Utility to store and retrieve configuration elements",
-  "main": "StEdsSettings.js",
+  "main": "index.js",
   "repository": {
     "url": "https://github.com/AidanNichol/settings",
     "type": "git"
