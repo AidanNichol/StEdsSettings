@@ -21,7 +21,6 @@ class Store {
     this.update = this.update.bind(this);
     this.tweakVal = this.tweakVal.bind(this);
     this.initStore = this.initStore.bind(this);
-    this.refresh = this.refresh.bind(this);
     this.outputEnv = this.outputEnv.bind(this);
     this.getAllSettings = this.getAllSettings.bind(this);
     this.flattenObj = this.flattenObj.bind(this);
@@ -59,12 +58,6 @@ class Store {
     outF = ours.STEDS_envfile || path.resolve(process.cwd(), '.env');
     ours.STEDS_envfile = outF;
     ours.forEach(item => this.update(...item));
-  }
-   refresh(){
-    const envConfig = dotenv.parse(fs.readFileSync(process.env.STEDS_envfile))
-    for (let k in envConfig) {
-      process.env[k] = envConfig[k]
-    }
   }
   save(){
     const data = this.flattenObj(this.data, 'STEDS');
