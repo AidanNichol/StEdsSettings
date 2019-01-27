@@ -39,6 +39,7 @@ class Store {
   }
   set(key, val){
     this.update(key,val);
+    process.env['STEDS_'+key]= val;
     this.save();
 
   }
